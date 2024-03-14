@@ -1,53 +1,36 @@
 module FizzBuzz where
 
-ifThenElse :: Bool -> a -> a -> a
-ifThenElse cond thenVal elseVal =
-  case cond of
-    True -> thenVal
-    False -> elseVal
-
 fizzbuzz :: Int -> String
--- fizzbuzz n = "One!"
--- fizzbuzz n = if n==1 then "One!" else "Two!"
--- fizzbuzz n = ifThenElse (n==1) "One!" "Two!"
-fizzbuzz n = menoresA20 (n)
-fizzbuzz _ = "othewise"
+fizzbuzz n
+  | isPrime n = "FizzBuzz!"
+  | otherwise = numeroATexto n
 
-menoresA20 :: Int -> String
-menoresA20 n
-  | n > 0 && n < 20 =
-      let respuestas =
-            words
-              ( "uno dos tres cuatro cinco seis siete ocho nueve diez "
-                  ++ "once doce trece catorce quince dieciseis "
-                  ++ "diecisiete dieciocho diecinueve"
-              )
-       in respuestas !! (n - 1)
+isPrime :: Int -> Bool
+isPrime n
+  | n <= 1 = False
+  | otherwise = not $ any (\x -> n `mod` x == 0) [2..isqrt n]
+numeroATexto :: Int -> String
+numeroATexto n
+  | n == 0 = "cero"
+  | n < 20 = basicNumbers !! (n - 1)
+  | n < 30 = if n `mod` 10 == 0 then tens !! 0 else "veinti" ++ numeroATexto (n `mod` 10)
+  | n < 100 = if n `mod` 10 == 0 then tens !! (n `div` 10 - 2) else tens !! (n `div` 10 - 2) ++ " y " ++ numeroATexto (n `mod` 10)
+  | n == 1000 = "mil"
+  | n < 1000 = if n `mod` 100 == 0 then hundreds !! (n `div` 100 - 1) else hundreds !! (n `div` 100 - 1) ++ " " ++ (if n `mod` 100 == 0 then "" else numeroATexto (n `mod` 100))
+  | n == 1000000 = "un millón"
+  | otherwise = numeroATexto (n `div` 1000) ++ " mil " ++ (if n `mod` 1000 == 0 then "" else numeroATexto (n `mod` 1000))
 
-dieces :: Int -> String
-dieces n
-  | n >= 2 && n <= 9 =
-      respuestas !! (n - 2)
-  where
-    respuestas = words "veinte treinta cuarenta cincuenta sesenta setenta ochenta noventa"
+isqrt :: Int -> Int
+isqrt = floor . sqrt . fromIntegral
 
-veintes :: Int -> String
-veintes n
-    | n > 20 && n < 30 =
-        let respuestas =
-             words 
-                ("veintiuno veintidos veintitres veinticuatro "
-                ++ "veinticinco veintiseis veintisiete veintiocho veintinueve")
-        in respuestas !! (n-2)         
-              
+basicNumbers :: [String]
+basicNumbers = ["uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "catorce", "quince"]
 
-number :: Int -> String
-number n
-  | n >= 1 && n < 20 = menoresA20 (n)
-  | n `mod` 10 == 0 && n < 100 = dieces (n `div` 10)
-  |n < 100 = veintes (n `div` 20) ++ " " ++veintes (n `mod` 20)
-  | n < 100 = dieces (n `div` 10) ++ " " ++ menoresA20 (n `mod` 10) 
-  | n == 100 = "cien"
+teens :: [String]
+teens = ["dieciséis", "diecisiete", "dieciocho", "diecinueve"]
 
--- fizzbuzz n |  (n==1) = "One!"
---            | (n/=1) = "Two!"
+tens :: [String]
+tens = ["veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+
+hundreds :: [String]
+hundreds = ["cien", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"]
